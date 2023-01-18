@@ -27,8 +27,8 @@ export default function LoginPage() {
       <Grid.Row>
         <Grid.Column textAlign='center'>
           <Form onSubmit={login}>
-            <Form.Input name='email' type='email' placeholder='Email' onChange={onChangeInput}/>
-            <Form.Input name='password' type='password' placeholder='Password' onChange={onChangeInput}/>
+            <Form.Input name='email' type='email' placeholder='Email' onChange={onChangeInput} />
+            <Form.Input name='password' type='password' placeholder='Password' onChange={onChangeInput} />
             <Button color='grey'>LOGIN</Button>
           </Form>
         </Grid.Column>

@@ -8,7 +8,12 @@ export default function PurposeList({ purposes }) {
 
   if (purposes.length === 0)
     return (
-      <Grid centered verticalAlign='middle' columns={1} style={{ height: '80vh' }}>
+      <Grid
+        centered
+        verticalAlign='middle'
+        columns={1}
+        style={{ height: '80vh' }}
+      >
         <Grid.Row>
           <Grid.Column textAlign='center'>
             <h1>There are no purposes yet</h1>
@@ -33,7 +38,6 @@ export default function PurposeList({ purposes }) {
             <Card.Content>
               <Button color='green'>Complete</Button>
               <Button color='orange' onClick={() => router.push(`/purposes/${purpose._id}`)}>View</Button>
-              <Button primary>Edit</Button>
             </Card.Content>
           </Card>
         )}
@@ -42,7 +46,7 @@ export default function PurposeList({ purposes }) {
   )
 }
 
-export const getServerSideProps = async ({req}) => {
+export const getServerSideProps = async ({ req }) => {
 
   const { data: { data } } = await axios.get('http://localhost:3000/api/purposes', {
     headers: {

@@ -1,60 +1,105 @@
 import axios from 'axios'
 import Error from 'next/error'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { Button, Confirm, Grid } from 'semantic-ui-react'
+import { useEffect, useState } from 'react'
+import { Button, Confirm, Form, Grid } from 'semantic-ui-react'
 
-export default function PurposeDetail({ purpose, error }) {
+export default function PurposeDetail({ cookie }) {
 
   const [confirm, setConfirm] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingUPD, setIsLoadingUPD] = useState(false)
+  const [isLoadingDEL, setIsLoadingDEL] = useState(false)
+  const [purpose, setPurpose] = useState({ _id: '', title: '', description: '' })
+  const [validations, setValidations] = useState({})
+  const [error, setError] = useState(null)
 
   const router = useRouter()
 
-  const open = () => setConfirm(true)
-  const close = () => setConfirm(false)
+  useEffect(() => {
+    loadPurpose(router.query.id)
+  }, [router.query.id])
+
+  const loadPurpose = async (id) => {
+    try {
+      const { data: { data } } = await axios.get(`/api/purposes/${id}`, {
+        headers: {
+          Cookie: cookie
+        }
+      })
+      const pp = data?.purpose
+      setPurpose({ _id: pp._id, title: pp.title, description: pp.description })
+    } catch (error) {
+      setError('Purpose not found')
+    }
+  }
+
+  const openModal = () => setConfirm(true)
+  const closeModal = () => setConfirm(false)
 
   const deleteClick = async () => {
-    setIsLoading(true)
+    setIsLoadingDEL(true)
     const deleted = await axios.delete(`/api/purposes/${purpose._id}`)
-    close()
+    closeModal()
     deleted.status === 204 && router.push('/purposes')
+  }
+
+  const validate = () => {
+    const validators = {}
+
+    if (!purpose.title) validators.title = 'Title is required'
+    if (!purpose.description) validators.description = 'Description is required'
+
+    return validators
+
+  }
+
+  const onChangeInput = (event) => {
+    setPurpose({
+      ...purpose,
+      [event.target.name]: event.target.value
+    })
+  }
+
+  const update = async (event) => {
+    event.preventDefault()
+    let validations = validate()
+    if (Object.keys(validations).length) return setValidations(validations)
+    setIsLoadingUPD(true)
+    const updated = await axios.patch(`/api/purposes/${purpose._id}`, purpose)
+    updated.status === 200 && router.push('/purposes')
   }
 
   if (error) return <Error title={error} statusCode={404} />
 
   return (
-    <Grid centered verticalAlign='middle' columns={1} style={{ height: '80vh' }}>
+    <Grid
+      centered
+      verticalAlign='middle'
+      columns={3}
+      style={{ height: '80vh' }}
+    >
       <Grid.Column textAlign='center'>
-        <h1>{purpose.title}</h1>
-        <p>{purpose.description}</p>
-        <div>
-          <Button negative onClick={open} loading={isLoading}>Delete</Button>
-        </div>
+        <Form>
+          <Form.Input
+            name='title' placeholder='Title' onChange={onChangeInput} value={purpose.title}
+            error={validations.title ? { content: validations.title, pointing: 'below' } : null} />
+          <Form.Input
+            name='description' placeholder='Description' onChange={onChangeInput} value={purpose.description}
+            error={validations.description ? { content: validations.description, pointing: 'below' } : null} />
+          <Button primary onClick={update} loading={isLoadingUPD}>UPDATE</Button>
+          <Button negative onClick={openModal} loading={isLoadingDEL}>DELETE</Button>
+        </Form>
       </Grid.Column>
-      <Confirm 
-      header='Please confirm' content='Are you sure you want to delete?'
-      open={confirm} onCancel={close} onConfirm={deleteClick}/>
+      <Confirm
+        header='Please confirm' content='Are you sure you want to delete?'
+        open={confirm} onCancel={closeModal} onConfirm={deleteClick} />
     </Grid>
   )
 }
 
-export const getServerSideProps = async ({ query: { id }, req }) => {
+export const getServerSideProps = async ({ req }) => {
 
-  try {
-    const { data } = await axios.get(`http://localhost:3000/api/purposes/${id}`, {
-      headers: {
-        Cookie: req.headers.cookie
-      }
-    })
-
-    const purpose = data.data?.purpose || null
-    return {
-      props: { purpose, error: null }
-    }
-  } catch (err) {
-    return {
-      props: { purpose: null, error: 'Purpose not found' }
-    }
+  return {
+    props: { cookie: req.headers.cookie }
   }
 }

@@ -11,7 +11,7 @@ export default function PurposeFormPage() {
 
   const validate = () => {
     const validators = {}
-    
+
     if (!newPurpose.title) validators.title = 'Title is required'
     if (!newPurpose.description) validators.description = 'Description is required'
 
@@ -29,14 +29,19 @@ export default function PurposeFormPage() {
   const create = async (event) => {
     event.preventDefault()
     let errors = validate()
-    if(Object.keys(errors).length) return setErrors(errors)
+    if (Object.keys(errors).length) return setErrors(errors)
 
     const created = await axios.post('/api/purposes', newPurpose)
     created.status === 201 && router.push('/purposes')
   }
   //TODO- Add photo at top
   return (
-    <Grid centered verticalAlign='middle' columns={3} style={{ height: '80vh' }}>
+    <Grid
+      centered
+      verticalAlign='middle'
+      columns={3}
+      style={{ height: '80vh' }}
+    >
       <Grid.Row>
         <Grid.Column textAlign='center'>
           <Form onSubmit={create}>
