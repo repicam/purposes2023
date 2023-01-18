@@ -11,6 +11,7 @@ export async function middleware(request) {
   try {
     await jwtVerify(userToken.value, new TextEncoder().encode(process.env.JWT_SECRET))
   } catch (error) {
+    console.log('INFO: MIDDLEWARE ERROR')
     console.log(error)
     return NextResponse.redirect(new URL('/login', request.url))
   }
