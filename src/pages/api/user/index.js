@@ -3,7 +3,7 @@ import User from 'models/User'
 
 dbConnect()
 
-export async function getUser(email) {
+export async function getUserByEmail(email) {
   return await User.findOne({email})
 }
 

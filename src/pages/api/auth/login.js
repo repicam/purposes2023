@@ -1,13 +1,13 @@
 import { sign } from 'jsonwebtoken'
 import { serialize } from 'cookie'
-import { createUser, getUser } from '../user'
+import { createUser, getUserByEmail } from '../user'
 import { comparePassword, hashPassword } from 'utils/bcrypt'
 
 export default async function login(req, res) {
 
   const { email, password } = req.body
 
-  let user = await getUser(email)
+  let user = await getUserByEmail(email)
 
   if (!user) {
     const hashedPassword = await hashPassword(password)
