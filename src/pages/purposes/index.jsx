@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
-import { Button, Card, Container, Grid } from 'semantic-ui-react';
+import { Button, Card, Container, Grid, Image } from 'semantic-ui-react';
+import Moment from 'moment'
+
+Moment.locale('es')
 
 export default function PurposeList({ purposes }) {
 
@@ -10,8 +12,8 @@ export default function PurposeList({ purposes }) {
   const completePurpose = async (purpose) => {
     purpose.completed = true
     purpose.finishDate = new Date()
-    await axios.patch(`/api/purposes/${purpose._id}`, purpose)
-    //volver a cargar los datos
+    const updated = await axios.patch(`/api/purposes/${purpose._id}`, purpose)
+    updated.status === 200 && router.push('/purposes')
   }
 
   if (purposes.length === 0)
@@ -22,6 +24,7 @@ export default function PurposeList({ purposes }) {
         columns={1}
         style={{ height: '80vh' }}
       >
+        <Image src='/empty.png' alt='Empty' width={700} height={500} />
         <Grid.Row>
           <Grid.Column textAlign='center'>
             <h1>There are no purposes yet</h1>
@@ -42,7 +45,7 @@ export default function PurposeList({ purposes }) {
             <Card.Content>
               <Card.Header>{purpose.title}</Card.Header>
               <Card.Description>{purpose.description}</Card.Description>
-              <Card.Description>{purpose.finishDate}</Card.Description>
+              {purpose.completed && <Card.Description>Completed: {Moment(purpose.finishDate).format('DD-MM-YYYY')}</Card.Description>}
             </Card.Content>
             <Card.Content textAlign='center'>
               {!purpose.completed && <Button color='green' onClick={() => completePurpose(purpose)}>COMPLETE</Button>}

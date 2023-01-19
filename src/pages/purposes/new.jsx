@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { Button, Form, Grid } from 'semantic-ui-react'
+import { Button, Form, Grid, Image } from 'semantic-ui-react'
 
 export default function PurposeFormPage() {
 
@@ -34,7 +34,7 @@ export default function PurposeFormPage() {
     const created = await axios.post('/api/purposes', newPurpose)
     created.status === 201 && router.push('/purposes')
   }
-  //TODO- Add photo at top
+
   return (
     <Grid
       centered
@@ -42,6 +42,12 @@ export default function PurposeFormPage() {
       columns={3}
       style={{ height: '80vh' }}
     >
+      <Grid.Row>
+        <Image src='/newyork.png' alt='New' width={700} height={300} />
+      </Grid.Row>
+      <Grid.Row>
+        <h1>New purpose</h1>
+      </Grid.Row>
       <Grid.Row>
         <Grid.Column textAlign='center'>
           <Form onSubmit={create}>
@@ -55,6 +61,6 @@ export default function PurposeFormPage() {
           </Form>
         </Grid.Column>
       </Grid.Row>
-    </Grid>
+    </Grid >
   )
 }
