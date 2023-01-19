@@ -17,7 +17,8 @@ export default async function login(req, res) {
       password: hashedPassword
     })
   } else {
-    if(!comparePassword(password, user.password))
+    const successLogin = await comparePassword(password, user.password)
+    if(!successLogin)
       return res.status(401).json({ error: 'Bad credentials' })
   }
 

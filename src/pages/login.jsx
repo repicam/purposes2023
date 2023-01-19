@@ -30,8 +30,14 @@ export default function LoginPage() {
     event.preventDefault()
     let errors = validate()
     if (Object.keys(errors).length) return setErrors(errors)
-    const login = await axios.post('/api/auth/login', credentials)
-    login.status === 200 && router.push('/purposes')
+    try {
+      const login = await axios.post('/api/auth/login', credentials)
+      login.status === 200 && router.push('/purposes')
+    } catch (error) {
+      const {response: {data}} = error
+      const badCredentials = {email: data.error, password: data.error}
+      setErrors(badCredentials)
+    }
   }
 
   return (
