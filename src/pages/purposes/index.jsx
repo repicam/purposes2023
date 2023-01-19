@@ -1,10 +1,18 @@
 import axios from 'axios'
 import { useRouter } from 'next/router'
+import { useState } from 'react'
 import { Button, Card, Container, Grid } from 'semantic-ui-react';
 
 export default function PurposeList({ purposes }) {
 
   const router = useRouter()
+
+  const completePurpose = async (purpose) => {
+    purpose.completed = true
+    purpose.finishDate = new Date()
+    await axios.patch(`/api/purposes/${purpose._id}`, purpose)
+    //volver a cargar los datos
+  }
 
   if (purposes.length === 0)
     return (
@@ -34,9 +42,10 @@ export default function PurposeList({ purposes }) {
             <Card.Content>
               <Card.Header>{purpose.title}</Card.Header>
               <Card.Description>{purpose.description}</Card.Description>
+              <Card.Description>{purpose.finishDate}</Card.Description>
             </Card.Content>
-            <Card.Content>
-              <Button color='green'>Complete</Button>
+            <Card.Content textAlign='center'>
+              {!purpose.completed && <Button color='green' onClick={() => completePurpose(purpose)}>COMPLETE</Button>}
               <Button color='orange' onClick={() => router.push(`/purposes/${purpose._id}`)}>View</Button>
             </Card.Content>
           </Card>

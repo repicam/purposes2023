@@ -3,13 +3,19 @@ import Error from 'next/error'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Button, Confirm, Form, Grid } from 'semantic-ui-react'
+import Image from 'next/image'
+import Moment from 'moment'
+
+Moment.locale('es')
 
 export default function PurposeDetail({ cookie }) {
 
   const [confirm, setConfirm] = useState(false)
   const [isLoadingUPD, setIsLoadingUPD] = useState(false)
   const [isLoadingDEL, setIsLoadingDEL] = useState(false)
-  const [purpose, setPurpose] = useState({ _id: '', title: '', description: '' })
+  const [purpose, setPurpose] = useState({
+    _id: '', title: '', description: '', completed: '', finishDate: ''
+  })
   const [validations, setValidations] = useState({})
   const [error, setError] = useState(null)
 
@@ -27,7 +33,10 @@ export default function PurposeDetail({ cookie }) {
         }
       })
       const pp = data?.purpose
-      setPurpose({ _id: pp._id, title: pp.title, description: pp.description })
+      setPurpose({
+        _id: pp._id, title: pp.title, description: pp.description,
+        completed: pp.completed || false, finishDate: pp.finishDate || null
+      })
     } catch (error) {
       setError('Purpose not found')
     }
@@ -60,8 +69,7 @@ export default function PurposeDetail({ cookie }) {
     })
   }
 
-  const update = async (event) => {
-    event.preventDefault()
+  const update = async () => {
     let validations = validate()
     if (Object.keys(validations).length) return setValidations(validations)
     setIsLoadingUPD(true)
@@ -76,24 +84,34 @@ export default function PurposeDetail({ cookie }) {
       centered
       verticalAlign='middle'
       columns={3}
-      style={{ height: '80vh' }}
+      style={{ height: '65vh' }}
     >
-      <Grid.Column textAlign='center'>
-        <Form>
-          <Form.Input
-            name='title' placeholder='Title' onChange={onChangeInput} value={purpose.title}
-            error={validations.title ? { content: validations.title, pointing: 'below' } : null} />
-          <Form.Input
-            name='description' placeholder='Description' onChange={onChangeInput} value={purpose.description}
-            error={validations.description ? { content: validations.description, pointing: 'below' } : null} />
-          <Button primary onClick={update} loading={isLoadingUPD}>UPDATE</Button>
-          <Button negative onClick={openModal} loading={isLoadingDEL}>DELETE</Button>
-        </Form>
-      </Grid.Column>
+      <Grid.Row >
+        <Grid.Column textAlign='left' className='ten wide'>
+          <Button onClick={() => router.push('/purposes')}>
+            <Image src='/left-arrow.png' alt='Go back' width={50} height={50} />
+          </Button>
+        </Grid.Column>
+      </Grid.Row>
+      <Grid.Row >
+        <Grid.Column textAlign='center'>
+          {purpose.completed && <h3>COMPLETED: {Moment(purpose.finishDate).format('DD-MM-YYYY')}</h3>}
+          <Form>
+            <Form.Input
+              name='title' placeholder='Title' onChange={onChangeInput} value={purpose.title}
+              error={validations.title ? { content: validations.title, pointing: 'below' } : null} />
+            <Form.Input
+              name='description' placeholder='Description' onChange={onChangeInput} value={purpose.description}
+              error={validations.description ? { content: validations.description, pointing: 'below' } : null} />
+            <Button primary onClick={() => update} loading={isLoadingUPD} disabled={purpose.completed}>UPDATE</Button>
+            <Button negative onClick={openModal} loading={isLoadingDEL}>DELETE</Button>
+          </Form>
+        </Grid.Column>
+      </Grid.Row>
       <Confirm
         header='Please confirm' content='Are you sure you want to delete?'
-        open={confirm} onCancel={closeModal} onConfirm={deleteClick} />
-    </Grid>
+        open={confirm} onCancel={closeModal} onConfirm={() => deleteClick} />
+    </Grid >
   )
 }
 
