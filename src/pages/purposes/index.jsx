@@ -59,8 +59,7 @@ export default function PurposeList({ purposes }) {
 }
 
 export const getServerSideProps = async ({ req }) => {
-
-  const { data: { data } } = await axios.get('http://localhost:3000/api/purposes', {
+  const { data: { data } } = await axios.get(`http://${req.headers.host}/api/purposes`, {
     headers: {
       Cookie: req.headers.cookie
     }

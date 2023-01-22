@@ -51,7 +51,7 @@ export default function Index({ data }) {
 
 export const getServerSideProps = async ({ req }) => {
 
-  const { data: { data } } = await axios.get('http://localhost:3000/api/user/info', {
+  const { data: { data } } = await axios.get(`http://${req.headers.host}/api/user/info`, {
     headers: {
       Cookie: req.headers.cookie
     }
