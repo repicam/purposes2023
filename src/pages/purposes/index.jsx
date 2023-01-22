@@ -24,7 +24,7 @@ export default function PurposeList({ purposes }) {
         columns={1}
         style={{ height: '80vh' }}
       >
-        <Image src='/empty.png' alt='Empty' width={700} height={500} />
+        <Image src='/empty.png' alt='Empty' width={600} height={400} />
         <Grid.Row>
           <Grid.Column textAlign='center'>
             <h1>There are no purposes yet</h1>

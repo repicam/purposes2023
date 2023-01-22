@@ -43,7 +43,10 @@ export default function LoginPage() {
   return (
     <Grid centered verticalAlign='middle' columns={3} style={{ height: '60vh' }}>
       <Grid.Row>
-        <Image src='/welcome.png' alt='New' width={700} height={300} />
+        <Image src='/welcome.png' alt='New' width={600} height={250} />
+      </Grid.Row>
+      <Grid.Row>
+        <h5>Not responsive. Recommended devices: computer or laptop. Sorry :D</h5>
       </Grid.Row>
       <Grid.Row>
         <Grid.Column textAlign='center'>
