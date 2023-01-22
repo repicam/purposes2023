@@ -1,5 +1,6 @@
-import { connect, connection } from 'mongoose'
+import { connect, connection, set } from 'mongoose'
 
+set("strictQuery", false);
 const URIConnection = `mongodb+srv://${process.env.BBDD_USER}:${process.env.BBDD_PASS}@mybbdd.c3unr1n.mongodb.net/${process.env.BBDD_SCHEMA}?retryWrites=true&w=majority`
 const conn = { isConnected: false }
 
