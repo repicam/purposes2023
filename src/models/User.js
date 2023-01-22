@@ -17,8 +17,7 @@ const userSchema = new Schema({
   }
 }, {
   versionKey: false,
-  timestamps: true,
-  strictQuery:  true
+  timestamps: true
 })
 
 export default models.User || model('User', userSchema)
