@@ -24,7 +24,8 @@ const purposeSchema = new Schema({
   }
 }, {
   versionKey: false,
-  timestamps: true
+  timestamps: true,
+  strictQuery:  true
 })
 
 export default models.Purpose || model('Purpose', purposeSchema)
